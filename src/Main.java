@@ -34,31 +34,7 @@ public class Main {
 // -------------------------------------------------------------------------------
 		
 		
-		Document codeSource = null;
-		try {
-			codeSource = Jsoup.connect("http://www.dxcontent.com/SDB_SpellBlock.asp?SDBID=1600").get();
-		} catch (IOException e1) {
-			System.out.println("La connection a echouee");
-			e1.printStackTrace();
-		}
-		//name
-		Elements divSpell = codeSource.select("div.SpellDiv");
-		Elements spell = divSpell.select("div.heading");
-		Elements name = spell.select("p");
-		
-		//level
-		Element level = divSpell.select("p.SPDet").first();
-		ArrayList<Element> level1 = level.getAllElements();
-		
-		//System.out.println(name.text());
-		//System.out.println(divSpell);
-		String[] liste = level.text().split(" ");
-		
-		for(int i =0; i< liste.length; i++){
-			System.out.println(liste[i]);
-		}
-		//TODO: Récuperer le level, les composants et spell resitance (boolean)
-		//EN faire une boucle sur toute les pages de 1 à 1600
+		new Crawler();
 		
 	}
 	
