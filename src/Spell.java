@@ -1,12 +1,17 @@
+import java.util.List;
 
 public class Spell {
 
 	private String name;
 	
-	
 	private String level;
 	
-	private String[] components;
+	private List<String> components;
+	
+	private boolean resistance;
+	
+	public Spell(){
+	}
 	
 
 	public String getName() {
@@ -25,15 +30,24 @@ public class Spell {
 		this.level = level;
 	}
 
-	public String[] getComponents() {
+
+	public List<String> getComponents() {
 		return components;
 	}
 
-	public void setComponents(String[] components) {
+
+	public void setComponents(List<String> components) {
 		this.components = components;
 	}
-	
-	
 
-	
+
+	public boolean isResistance() {
+		return resistance;
+	}
+
+
+	public void setResistance(boolean resistance) {
+		this.resistance = resistance;
+	}
+
 }
