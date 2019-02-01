@@ -4,6 +4,8 @@ public class Spell {
 
 	private String name;
 	
+	private String classe;
+	
 	private String level;
 	
 	private List<String> components;
@@ -21,6 +23,16 @@ public class Spell {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public String getClasse() {
+		return classe;
+	}
+
+
+	public void setClasse(String classe) {
+		this.classe = classe;
+	}
+
 
 	public String getLevel() {
 		return level;

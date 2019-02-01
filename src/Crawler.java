@@ -4,29 +4,30 @@ import java.util.List;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Crawler {	
 
-	public Crawler(){
+	public List<Spell> recupSpell(){
+
+		List<Spell> spellList = new ArrayList<>();
 
 		Document codeSource = null;
 
 		//Parcours de toutes les pages
-		for(int page = 1; page <= 1600; page++){
-			
+		for(int page = 1; page <= 16; page++){
+
 			try {
 				codeSource = Jsoup.connect("http://www.dxcontent.com/SDB_SpellBlock.asp?SDBID=" + page).get();
 			} catch (IOException e1) {
 				System.out.println("La connection a echouee");
 				e1.printStackTrace();
 			}
-			
+
 			Spell spell = new Spell();
-			
+
 			Elements divSpell = codeSource.select("div.SpellDiv");
-			
+
 			//Recuperation du nom du spell
 			Elements spell1 = divSpell.select("div.heading");
 			spell.setName( spell1.select("p").first().text());
@@ -39,6 +40,7 @@ public class Crawler {
 				//Si cest un sorcier, on recupere le level correspondant
 				if(listeLevel[i].equals("sorcerer/wizard")){
 					spell.setLevel(listeLevel[i+1].replaceAll(",", ""));
+					spell.setClasse("wizard");
 				}
 			}
 			//Sinon on prend le premier level
@@ -46,6 +48,7 @@ public class Crawler {
 				for(int i =0; i< listeLevel.length; i++){
 					if(listeLevel[i].equals("Level")){
 						spell.setLevel(listeLevel[i+2].replaceAll(",", ""));
+						spell.setClasse(listeLevel[i+1].replaceAll(",", ""));
 						break;
 					}
 				}
@@ -78,13 +81,20 @@ public class Crawler {
 					spell.setResistance(false);
 				}
 			}
-			
+
+			//Ajout du spell recuperer a la liste
+			spellList.add(spell);
+
 			//Affichage des résultats
-			System.out.println(spell.getName()
-					+ " " + spell.getLevel()
-					+ " " + spell.getComponents()
-					+ " " + spell.isResistance()
-					+ " " + page);
+//			System.out.println(spell.getName()
+//					+ " " + spell.getClasse()
+//					+ " " + spell.getLevel()
+//					+ " " + spell.getComponents()
+//					+ " " + spell.isResistance()
+//					+ " " + page
+//					+ " " + spellList.get(page-1).getName());
 		}
+
+		return spellList;
 	}
 }
