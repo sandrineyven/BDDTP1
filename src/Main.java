@@ -15,8 +15,6 @@ import com.mongodb.client.MongoDatabase;
 
 public class Main {
 
-
-	@SuppressWarnings("resource")
 	public static void main(String[] args) {
 
 		//Connexion MongoDB
@@ -45,8 +43,7 @@ public class Main {
 					+ " COMPONENT3      TEXT, "
 					+ " RESISTANCE	  INT)"; 
 			stmt.executeUpdate(sql);
-			//	         stmt.close();
-			//	         c.close();
+
 
 		} catch ( Exception e ) {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
@@ -170,8 +167,12 @@ public class Main {
 			Document documentResult = (Document)iterator.next();
 			System.out.println(documentResult.toString());
 		}
+		
+		//TODO: requete SQLite
+		//TODO: afficher les resultats joliement
+		//TODO: close les db propremement, clean code
+		
 
 	}
-
 
 }
