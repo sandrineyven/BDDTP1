@@ -15,7 +15,7 @@ public class Crawler {
 		Document codeSource = null;
 
 		//Parcours de toutes les pages
-		for(int page = 1; page <= 1600; page++){
+		for(int page = 1; page <= 16; page++){
 
 			try {
 				codeSource = Jsoup.connect("http://www.dxcontent.com/SDB_SpellBlock.asp?SDBID=" + page).get();
