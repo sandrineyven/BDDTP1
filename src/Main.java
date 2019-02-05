@@ -40,7 +40,9 @@ public class Main {
 					+ " NAME           TEXT    NOT NULL, "  
 					+ " CLASSE         TEXT     NOT NULL, "  
 					+ " LEVEL       	  TEXT, "  
-					+ " COMPONENT      TEXT, "
+					+ " COMPONENT1      TEXT, "
+					+ " COMPONENT2      TEXT, "
+					+ " COMPONENT3      TEXT, "
 					+ " RESISTANCE	  INT)"; 
 			stmt.executeUpdate(sql);
 			//	         stmt.close();
@@ -50,7 +52,7 @@ public class Main {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
 		}
-		
+
 		//SQLITE - Si les spells ne sont pas dans la db
 		int presenceSQLite = 0;
 
@@ -89,13 +91,14 @@ public class Main {
 			}else if(presenceSQLite == 0){
 				//insert
 				for(int i=0; i<listSpell.size(); i++){
-					String sql = "INSERT INTO SPELLS (ID,NAME,CLASSE,LEVEL,COMPONENT,RESISTANCE) VALUES ("
+					String sql = "INSERT INTO SPELLS (ID,NAME,CLASSE,LEVEL,COMPONENT1,RESISTANCE) VALUES ("
 							+ i + ", \""
-	                        + listSpell.get(i).getName()   + "\", \"" 
-	                        + listSpell.get(i).getClasse() + "\", \""
-	                        + listSpell.get(i).getLevel()  + "\", \""
-	                        + listSpell.get(i).getComponents().get(0)+ "\", \""
-	                        + listSpell.get(i).isResistance() + "\");"; 
+							+ listSpell.get(i).getName()   + "\", \"" 
+							+ listSpell.get(i).getClasse() + "\", \""
+							+ listSpell.get(i).getLevel()  + "\", \""
+							+ listSpell.get(i).getComponents().get(0) + "\", \""
+							+ listSpell.get(i).isResistance() + "\");"; 
+
 					System.out.println(sql);
 					try {
 						stmt.executeQuery(sql);
@@ -103,6 +106,34 @@ public class Main {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
+					if(listSpell.get(i).getComponents().size() > 1 ){
+						String newsql = "UPDATE SPELLS SET COMPONENT2 = \""
+								+ listSpell.get(i).getComponents().get(1) + "\" "
+								+ "WHERE ID = "+ i +";";
+						try {
+							System.out.println(newsql);
+							stmt.executeQuery(newsql);
+
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						if(listSpell.get(i).getComponents().size() > 2){
+							String newsql1 = "UPDATE SPELLS SET COMPONENT3 = \""
+									+ listSpell.get(i).getComponents().get(2) + "\" "
+									+ "WHERE ID = "+ i +";";
+							try {
+								System.out.println(newsql1);
+								stmt.executeQuery(newsql1);
+
+							} catch (SQLException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					}
+
+
 				}
 			}
 			System.out.println("Recuperation des spells: Done");
