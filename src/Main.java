@@ -38,23 +38,30 @@ public class Main {
 						.append("Spell resistance", listSpell.get(i).isResistance());
 				//Insertion du document
 				collection.insertOne(doc);
-
-				
 			}
 			System.out.println("Recuperation des spells: Done");
 		}
 		
 		//MAPREDUCE - MongoDB
 		String map ="function() {"
+				//Tri: Tous les niveaux <= 4
 				+ "if(this.Level <= 4)"
+				//Classe 'wizard'
 				+ "if(this.Classe == 'wizard')"
+				//Composante verbale
 				+ "if(this.Components[0] == 'V')"
+				//Composante verbale uniquement
 				+ "if(this.Components[1] == null)"
 				+ "emit(this.Name,1);}";
+		
+		//Le tri se fait seulement avec map, la fonction reduce n'est pas utilisee
 		String reduce ="function(key,value) {return;}"; 
+		
+		
 		MapReduceIterable<Document> mapReduceResult = collection.mapReduce(map, reduce);
 		System.out.println("Resultats mapReduce:");
 		
+		//Affichage des resultats
 		Iterator<Document> iterator = mapReduceResult.iterator();
 		while(iterator.hasNext())
 		{
