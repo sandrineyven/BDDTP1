@@ -134,12 +134,32 @@ public class Main {
 				}
 			}
 			System.out.println("Recuperation des spells: Done");
-		}
+		}else if (presenceSQLite == 1) {
+			String sqlselect = "SELECT * FROM SPELLS WHERE LEVEL < 4 AND CLASSE = \"wizard\" AND COMPONENT1 =\"V\" AND COMPONENT2 IS NULL ";
+			try {
+				System.out.println(sqlselect);
+				 ResultSet rs = stmt.executeQuery(sqlselect);
+				while (rs.next()) {
+	                System.out.println(rs.getInt("ID") +  "\t" + 
+	                                   rs.getString("NAME") + "\t" +
+	                                   rs.getString("LEVEL") + "\t" +
+	                                   rs.getString("COMPONENT1") + "\t" +
+	                                   rs.getString("COMPONENT2") + "\t" +
+	                                   rs.getString("COMPONENT3") + "\t" +
+	                                   rs.getDouble("CLASSE"));
+	            }
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}	
+	
+//TODO: requete SQLite
+		
+		
 
-
-
-
-
+/*
 		//MAPREDUCE - MongoDB
 		String map ="function() {"
 				//Tri: Tous les niveaux <= 4
@@ -167,7 +187,7 @@ public class Main {
 			Document documentResult = (Document)iterator.next();
 			System.out.println(documentResult.toString());
 		}
-		
+	*/	
 		//TODO: requete SQLite
 		//TODO: afficher les resultats joliement
 		//TODO: close les db propremement, clean code
