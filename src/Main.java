@@ -6,6 +6,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.bson.Document;
 
 import com.mongodb.MongoClient;
@@ -25,14 +26,14 @@ public class Main {
 
 		//Connexion SQLite
 		System.out.println("Connexion SQLite...");
-		Connection c = null;
+		Connection connection = null;
 		Statement stmt = null;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			connection = DriverManager.getConnection("jdbc:sqlite:TP1.db");
 			//Creation de la table si elle n'existe pas
-			stmt = c.createStatement();
+			stmt = connection.createStatement();
 			String sql = "CREATE TABLE IF NOT EXISTS SPELLS " 
 					+ "(ID INT PRIMARY KEY     NOT NULL," 
 					+ " NAME           TEXT    NOT NULL, "  
@@ -44,24 +45,22 @@ public class Main {
 					+ " RESISTANCE	  INT)"; 
 			stmt.executeUpdate(sql);
 
-
 		} catch ( Exception e ) {
 			System.err.println( e.getClass().getName() + ": " + e.getMessage() );
 			System.exit(0);
 		}
 
 		//SQLITE - Si les spells ne sont pas dans la db
+		//indicateur de presence dans la BDD
 		int presenceSQLite = 0;
-
 		try {
 			String sql = "SELECT COUNT(ID) FROM SPELLS";
 			ResultSet resultat = stmt.executeQuery(sql); 
-			System.out.println(resultat.getInt(1));
+			System.out.println("Nombre de spells dans la DB: " + resultat.getInt(1));
 			if(resultat.getInt(1) > 0){
 				presenceSQLite = 1;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 
@@ -96,11 +95,9 @@ public class Main {
 							+ listSpell.get(i).getComponents().get(0) + "\", \""
 							+ listSpell.get(i).isResistance() + "\");"; 
 
-					System.out.println(sql);
 					try {
 						stmt.executeQuery(sql);
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
 					if(listSpell.get(i).getComponents().size() > 1 ){
@@ -108,11 +105,9 @@ public class Main {
 								+ listSpell.get(i).getComponents().get(1) + "\" "
 								+ "WHERE ID = "+ i +";";
 						try {
-							System.out.println(newsql);
 							stmt.executeQuery(newsql);
 
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						if(listSpell.get(i).getComponents().size() > 2){
@@ -120,46 +115,39 @@ public class Main {
 									+ listSpell.get(i).getComponents().get(2) + "\" "
 									+ "WHERE ID = "+ i +";";
 							try {
-								System.out.println(newsql1);
 								stmt.executeQuery(newsql1);
 
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
 					}
-
-
 				}
 			}
 			System.out.println("Recuperation des spells: Done");
-		}else if (presenceSQLite == 1) {
-			String sqlselect = "SELECT * FROM SPELLS WHERE LEVEL < 4 AND CLASSE = \"wizard\" AND COMPONENT1 =\"V\" AND COMPONENT2 IS NULL ";
-			try {
-				System.out.println(sqlselect);
-				 ResultSet rs = stmt.executeQuery(sqlselect);
-				while (rs.next()) {
-	                System.out.println(rs.getInt("ID") +  "\t" + 
-	                                   rs.getString("NAME") + "\t" +
-	                                   rs.getString("LEVEL") + "\t" +
-	                                   rs.getString("COMPONENT1") + "\t" +
-	                                   rs.getString("COMPONENT2") + "\t" +
-	                                   rs.getString("COMPONENT3") + "\t" +
-	                                   rs.getDouble("CLASSE"));
-	            }
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		}
+		
+		//Requete SQlite
+		String sqlselect = "SELECT * FROM SPELLS WHERE"
+				//Tous les niveau <= 4
+				+ " LEVEL < 5"
+				//De la classe 'wizard
+				+ " AND CLASSE = \"wizard\""
+				//Avec composante verbale
+				+ " AND COMPONENT1 =\"V\""
+				//Et verbale seulement
+				+ " AND COMPONENT2 IS NULL ";
+		try {
+			ResultSet rs = stmt.executeQuery(sqlselect);
+			System.out.println("------------ Resultats SQLite: ------------");
+			while (rs.next()) {
+				//Affichage des resultats
+				System.out.println(rs.getString("NAME"));
 			}
-			
-		}	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	
-//TODO: requete SQLite
-		
-		
-
-/*
 		//MAPREDUCE - MongoDB
 		String map ="function() {"
 				//Tri: Tous les niveaux <= 4
@@ -178,7 +166,7 @@ public class Main {
 
 
 		MapReduceIterable<Document> mapReduceResult = collection.mapReduce(map, reduce);
-		System.out.println("Resultats mapReduce:");
+		System.out.println("------------ Resultats mapReduce: ------------");
 
 		//Affichage des resultats
 		Iterator<Document> iterator = mapReduceResult.iterator();
@@ -187,12 +175,11 @@ public class Main {
 			Document documentResult = (Document)iterator.next();
 			System.out.println(documentResult.toString());
 		}
-	*/	
-		//TODO: requete SQLite
-		//TODO: afficher les resultats joliement
-		//TODO: close les db propremement, clean code
-		
 
+		//Close DB
+		DbUtils.closeQuietly(stmt);
+		DbUtils.closeQuietly(connection);
+		mongoClient.close();
 	}
 
 }
